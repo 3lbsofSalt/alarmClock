@@ -4,18 +4,18 @@ __script_version="1.0"
 
 #Default Values
 
-human_time="tomorrow 5:55"
-media_url="/home/max/Music/Superman.mp3"
+human_time="tomorrow 5:30"
+media_url="./Music/allthesmallthings.mp3"
 
 function gradual() {
-    amixer -c 1 set Master 10% > /dev/null
-    current_volume=$(amixer -c 1 get Master | egrep -o "[0-9]+%")
+    amixer -c 0 set Master 10% > /dev/null
+    current_volume=$(amixer -c 0 get Master | egrep -o "[0-9]+%")
     current_volume=${current_volume//%}
 
     while [[ current_volume -lt 100 ]]
     do
         sleep 5
-        current_volume=$(amixer -c 1 set Master 10%+ | egrep -o "[0-9]+%")
+        current_volume=$(amixer -c 0 set Master 10%+ | egrep -o "[0-9]+%")
         current_volume=${current_volume//%}
     done
 }
@@ -89,7 +89,7 @@ fi
 sudo rtcwake -m mem -t $unix_time > /dev/null
 sleep 30
 
-saved_volume=$(amixer -c 1 get Master | egrep -o "[0-9]+%")
+saved_volume=$(amixer -c 0 get Master | egrep -o "[0-9]+%")
 
 gradual &
 mplayer -noconsolecontrols -really-quiet -msglevel all=-1 -nolirc "$media_url" > /dev/null &
@@ -113,6 +113,6 @@ then
     fallback
 fi
 
-amixer -c 1 set Master $saved_volume > /dev/null
+amixer -c 0 set Master $saved_volume > /dev/null
 
 echo "Remember to do homework and Dont forget to pray!"
