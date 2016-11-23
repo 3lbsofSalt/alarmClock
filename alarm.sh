@@ -1,11 +1,12 @@
 #!/bin/bash
 
-__script_version="1.0"
+__script_version="1.1"
 
 #Default Values
 
 human_time="tomorrow 5:30"
 media_url="./Music/allthesmallthings.mp3"
+base_media_url="./Music"
 
 function gradual() {
     amixer -c 0 set Master 10% > /dev/null
@@ -45,22 +46,25 @@ function usage() {
     -h|help     Display this message
     -v|version  Display script version
     -m|media    The audio url, to be played by mplayer
-    -t|time     The human readable time and date for the alarm"
+    -t|time     The human readable time and date for the alarm
+    -R|random   Randomizes Wake-Up Music"
 }
 
-while getopts ":hvm:t:" opt
+while getopts ":hRvm:t:" opt
 do 
     case $opt in 
 
         h|help      )   usage; exit 0   ;;
 
-        v|version   )   echo "$0 -- vversion $__script__version"; exit 0    ;;
+        R|random    )   media_url="$base_media_url/$(ls $base_media_url | sort -R | tail -1)"; echo $media_url    ;;
+
+        v|version   )   echo "$0 -- version $__script__version"; exit 0    ;;
 
         m|media     )   media_url=$OPTARG   ;;
 
         t|time      )   human_time=$OPTARG  ;;
 
-        *   )   echo -e "\n Option does not exits : $OPTARG\n"
+        *   )   echo -e "\n Option does not exist : $OPTARG\n"
                 usage; exit 1   ;;
 
     esac
@@ -70,7 +74,6 @@ shift $(($OPTIND-1))
 echo $human_time
 unix_time=$(date +%s -d "$human_time")
 seconds=$(($unix_time - $(date +%s)))
-echo $seconds
 
 if [ $? -ne 0 ]; then
     echo "meh"
